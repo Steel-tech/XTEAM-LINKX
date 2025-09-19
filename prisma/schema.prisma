@@ -44,8 +44,19 @@ model User {
   email         String    @unique
   emailVerified DateTime?
   image         String?
+  role          String    @default("FIELD") // FIELD, SHOP, FOREMAN, PM, ADMIN
+  location      String?   // Current location for tracking
   accounts      Account[]
   sessions      Session[]
+
+  // Messaging relationships
+  sentMessages     Message[] @relation("MessageSender")
+  jobMemberships   JobMember[]
+
+  // Crew relationships
+  crewMemberships  CrewMember[]
+  foremanCrews     Crew[]    @relation("CrewForeman")
+
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
@@ -56,5 +67,139 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+// Job management models
+model Job {
+  id          String    @id @default(cuid())
+  name        String    // Job name/title
+  title       String    // Display title
+  client      String    // Client name
+  description String?
+  location    String?
+  status      String    @default("ACTIVE") // ACTIVE, COMPLETE, ON_HOLD
+  priority    String    @default("medium") // low, medium, high, urgent
+  startDate   DateTime?
+  endDate     DateTime?
+
+  // Relationships
+  members     JobMember[]
+  messages    Message[]
+  crews       CrewAssignment[]
+  events      CalendarEvent[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model JobMember {
+  id     String @id @default(cuid())
+  jobId  String
+  userId String
+  role   String @default("member") // admin, supervisor, member
+
+  // Relationships
+  job    Job    @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([jobId, userId])
+}
+
+// Real-time messaging models
+model Message {
+  id        String   @id @default(cuid())
+  content   String
+  type      String   @default("text") // text, image, file, system
+
+  // Relationships
+  senderId  String
+  sender    User     @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+
+  jobId     String?
+  job       Job?     @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  // Message status
+  isEdited  Boolean  @default(false)
+  editedAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([jobId, createdAt])
+  @@index([senderId])
+}
+
+// Crew management models
+model Crew {
+  id         String   @id @default(cuid())
+  name       String
+  type       String   // FIELD or SHOP
+  foremanId  String?
+  active     Boolean  @default(true)
+
+  // Relationships
+  foreman    User?    @relation("CrewForeman", fields: [foremanId], references: [id])
+  members    CrewMember[]
+  assignments CrewAssignment[]
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model CrewMember {
+  id     String @id @default(cuid())
+  crewId String
+  userId String
+  active Boolean @default(true)
+
+  // Relationships
+  crew   Crew   @relation(fields: [crewId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([crewId, userId])
+}
+
+model CrewAssignment {
+  id         String   @id @default(cuid())
+  jobId      String
+  crewId     String
+  location   String   // FIELD or SHOP
+  active     Boolean  @default(true)
+  assignedAt DateTime @default(now())
+
+  // Relationships
+  job        Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  crew       Crew     @relation(fields: [crewId], references: [id], onDelete: Cascade)
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([jobId, crewId])
+}
+
+// Calendar and scheduling models
+model CalendarEvent {
+  id         String   @id @default(cuid())
+  jobId      String
+  title      String
+  description String?
+  date       DateTime
+  type       String   // MEETING, INSPECTION, DEADLINE, TASK
+  attendees  String   // JSON array of user IDs
+  reminder   Boolean  @default(false)
+  allDay     Boolean  @default(false)
+
+  // Relationships
+  job        Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([jobId, date])
+  @@index([date])
 }
 

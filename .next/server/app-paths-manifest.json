@@ -1,0 +1,21 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/admin/jobs/route": "app/api/admin/jobs/route.js",
+  "/api/calendar/events/route": "app/api/calendar/events/route.js",
+  "/api/calendar/jobs/route": "app/api/calendar/jobs/route.js",
+  "/api/calendar/reminders/route": "app/api/calendar/reminders/route.js",
+  "/api/crews/assign/route": "app/api/crews/assign/route.js",
+  "/api/health/route": "app/api/health/route.js",
+  "/api/crews/route": "app/api/crews/route.js",
+  "/api/jobs/route": "app/api/jobs/route.js",
+  "/api/messages/route": "app/api/messages/route.js",
+  "/api/ws/route": "app/api/ws/route.js",
+  "/api/messages/typing/route": "app/api/messages/typing/route.js",
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/admin/page": "app/admin/page.js",
+  "/calendar/page": "app/calendar/page.js",
+  "/messages/page": "app/messages/page.js",
+  "/unauthorized/page": "app/unauthorized/page.js",
+  "/page": "app/page.js",
+  "/admin/crews/page": "app/admin/crews/page.js"
+}
