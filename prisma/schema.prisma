@@ -48,6 +48,12 @@ model User {
   sessions      Session[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+
+  // Field operations relations
+  crewAssignments CrewAssignment[]
+  timeEntries     TimeEntry[]
+  reports         Report[]
+  blueprintMarkups BlueprintMarkup[]
 }
 
 model VerificationToken {
@@ -57,4 +63,114 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
+// Construction field management models
+model Job {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  location    String
+  startDate   DateTime
+  endDate     DateTime?
+  status      String    @default("ACTIVE") // "ACTIVE", "COMPLETED", "CANCELLED", "ON_HOLD"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  crewAssignments CrewAssignment[]
+  timeEntries     TimeEntry[]
+  reports         Report[]
+  blueprints      Blueprint[]
+}
+
+model CrewAssignment {
+  id         String           @id @default(cuid())
+  jobId      String
+  userId     String
+  location   String           @default("FIELD") // "FIELD" or "SHOP"
+  assignedAt DateTime         @default(now())
+  status     String           @default("ACTIVE") // "ACTIVE", "INACTIVE", "COMPLETED"
+
+  // Relations
+  job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([jobId, userId])
+}
+
+model TimeEntry {
+  id        String    @id @default(cuid())
+  userId    String
+  jobId     String
+  location  String // "FIELD" or "SHOP"
+  clockIn   DateTime
+  clockOut  DateTime?
+  duration  Int?      // minutes
+  notes     String?
+  createdAt DateTime  @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+}
+
+model Report {
+  id          String     @id @default(cuid())
+  jobId       String
+  userId      String
+  type        String     // "INSPECTION", "NCR", "SAFETY", "PROGRESS", "INCIDENT"
+  title       String
+  content     String
+  attachments String     @default("[]") // JSON array of file URLs
+  status      String     @default("DRAFT") // "DRAFT", "SUBMITTED", "REVIEWED", "APPROVED"
+  submittedAt DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relations
+  job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Blueprint {
+  id          String           @id @default(cuid())
+  jobId       String
+  name        String
+  description String?
+  fileUrl     String
+  mimeType    String?          // image/jpeg, image/png, application/pdf
+  fileSize    Int?             // file size in bytes
+  markups     String           @default("[]") // JSON array of markup data
+  version     Int              @default(1)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  // Relations
+  job         Job              @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  markupSaves BlueprintMarkup[]
+}
+
+model BlueprintMarkup {
+  id          String    @id @default(cuid())
+  blueprintId String
+  userId      String?
+  name        String
+  markupData  String    // JSON string containing markup elements
+  description String?
+  isShared    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  blueprint   Blueprint @relation(fields: [blueprintId], references: [id], onDelete: Cascade)
+  user        User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([blueprintId])
+  @@index([userId])
+}
+
+// SQLite compatibility notes:
+// - Enums replaced with String fields with comments indicating valid values
+// - Array fields replaced with JSON strings
+// - All relationships maintained for proper data integrity
 
