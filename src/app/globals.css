@@ -144,6 +144,35 @@
     margin: 48px;
   }
 
+  /* Utility classes for design system colors */
+  .text-success {
+    color: hsl(var(--success));
+  }
+  .text-warning {
+    color: hsl(var(--warning));
+  }
+  .text-accent {
+    color: hsl(var(--accent));
+  }
+  .bg-success {
+    background-color: hsl(var(--success));
+  }
+  .bg-warning {
+    background-color: hsl(var(--warning));
+  }
+  .bg-accent {
+    background-color: hsl(var(--accent));
+  }
+  .text-success-foreground {
+    color: hsl(var(--background));
+  }
+  .text-warning-foreground {
+    color: hsl(var(--background));
+  }
+  .text-accent-foreground {
+    color: hsl(var(--accent-foreground));
+  }
+
   /* Animation and shadow styles from design system */
   .shadow-sm {
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);

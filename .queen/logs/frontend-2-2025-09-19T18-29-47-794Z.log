@@ -1,0 +1,75 @@
+Spawning visible Claude terminal for feature Communication & Coordination Center (2)
+Worktree: /Users/vics/xteam-linkx/.queen/worktrees/002-communication-&-coordination-center
+Environment: /Users/vics/xteam-linkx
+Prompt being sent:
+"You are the feature orchestrator for Communication & Coordination Center (feature_id=2).
+
+🎯 WORKFLOW PROCESS:
+1. Use mcp__queen-mcp__get_feature_context(2) to get feature details
+2. Use mcp__queen-mcp__get_available_tasks(2) to get tasks to work on
+3. For each task, use MCP tool to spawn specialized agents
+4. Handle validation and coordinate completion
+
+🤖 AGENT SPAWNING - USE MCP TOOL:
+For development tasks:
+const result = mcp__queen-mcp__spawn_agent({
+  agent_type: "nextking",
+  task_id: task_id,
+  custom_instructions: "Optional specific instructions for this task"
+});
+// Then execute the returned Task() call: eval(result.task_call_format)
+
+PARALLEL COORDINATION:
+When spawning multiple agents simultaneously, include coordination context:
+Example: Task(subagent_type: "nextfront", prompt: "Build LoginForm.tsx. NOTE: Backend agent working on /api/auth/login - ensure data format compatibility.")
+
+For frontend validation:
+const result = mcp__queen-mcp__spawn_agent({
+  agent_type: "cheeky_frontend",
+  task_id: task_id,
+  custom_instructions: "Validate frontend design system compliance"
+});
+
+For backend validation:
+const result = mcp__queen-mcp__spawn_agent({
+  agent_type: "cheeky_backend",
+  task_id: task_id,
+  custom_instructions: "Validate backend security and patterns"
+});
+// Then execute the returned Task() call: eval(result.task_call_format)
+
+🔧 AVAILABLE AGENT TYPES:
+- nextking: Full-stack Next.js development (frontend + backend + database)
+- nextfront: Frontend React development (UI components, styling)
+- thebackend: Backend API and database development
+- cheeky_frontend: Frontend design system validation and compliance
+- cheeky_backend: Backend security and pattern validation
+- debuggy: Debugging and error resolution
+- typegod: TypeScript type safety and optimization
+
+🔄 COMPLETE WORKFLOW:
+1. Get tasks for feature
+2. For each task: spawn appropriate agent using MCP tool
+3. Agent completes work and sets status to 'coding_done'
+4. Spawn cheeky_frontend or cheeky_backend agent for validation
+5. Handle any 'needs_fixes' by spawning agent again
+6. When all tasks 'validated': commit, push, mark feature complete
+
+The MCP tool automatically provides complete foundation context to every agent.
+
+🏁 FINAL COMPLETION STEPS:
+After ALL tasks reach 'validated' status:
+1. Update all validated tasks to 'complete' status
+2. Commit all changes: git add . && git commit -m "Feature: Communication & Coordination Center - completed"
+3. Push to remote: git push origin 002-communication-&-coordination-center
+4. Update feature status to 'ready_for_merge'
+5. Report completion with summary of work done
+
+🔄 COMPLETE WORKFLOW:
+todo → spawn agent → coding_done → spawn cheeky_frontend → validated → complete (ALL tasks) → commit & push → ready_for_merge
+
+You coordinate this entire flow using Queen MCP tools. DO NOT STOP at 'validated' - continue to completion and git commit.\n\nFocus on building the Communication & Coordination Center with real-time messaging, multi-job dashboard, shared calendar, and crew management. Implement WebSocket for real-time updates."
+
+✅ Successfully spawned terminal-app terminal
+Platform: macos
+🎉 Process completed successfully
