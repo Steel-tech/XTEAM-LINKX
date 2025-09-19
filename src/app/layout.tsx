@@ -1,6 +1,7 @@
 import React from "react";
 import type { Metadata } from "next";
 import { Space_Grotesk, Space_Mono } from "next/font/google";
+import { AuthProvider } from "@/components/providers/auth-provider";
 import "./globals.css";
 
 const headingFont = Space_Grotesk({
@@ -27,7 +28,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${headingFont.variable} ${bodyFont.variable}`}>
-      <body className="font-body">{children}</body>
+      <body className="font-body">
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }
